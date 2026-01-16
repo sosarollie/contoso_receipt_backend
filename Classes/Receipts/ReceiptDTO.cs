@@ -12,7 +12,7 @@
         public Decimal Total_amount { get; set; }
         public String Proper_name { get; set; }
         public String Email { get; set; }
-        public String Name { get; set; }
+        public String CategoryName { get; set; }
 
         public ReceiptDTO() { }
         public ReceiptDTO(Receipt receipt)
@@ -22,7 +22,7 @@
             Total_amount = receipt.Total_amount;
             Proper_name = receipt.Proper_name;
             Email = receipt.Email;
-            Name = receipt.Name;
+            CategoryName = receipt.CategoryName;
         }
        
     }

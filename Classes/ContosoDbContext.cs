@@ -63,7 +63,7 @@ namespace contoso_receipt_backend.Classes
                 .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<Receipt>()
-                .HasOne<User>()
+                .HasOne<Employee>()
                 .WithMany()
                 .HasForeignKey(r => r.Email)
                 .OnDelete(DeleteBehavior.Restrict);
@@ -71,12 +71,25 @@ namespace contoso_receipt_backend.Classes
             modelBuilder.Entity<Receipt>()
                 .HasOne<Category>()
                 .WithMany()
-                .HasForeignKey(r => r.Name)
+                .HasForeignKey(r => r.CategoryName)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // Configure StatusChange - composite key
+            // Configure StatusChange
             modelBuilder.Entity<StatusChange>()
-                .HasKey(sc => new { sc.Email, sc.Old_status, sc.New_status });
+                .HasKey(sc => sc.Id);
+
+            // Configure enum conversions for SQLite
+            modelBuilder.Entity<StatusChange>()
+                .Property(sc => sc.Old_status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<StatusChange>()
+                .Property(sc => sc.New_status)
+                .HasConversion<string>();
+
+            modelBuilder.Entity<Status>()
+                .Property(s => s.Name)
+                .HasConversion<string>();
 
             // Configure StatusChange relationships
             modelBuilder.Entity<StatusChange>()

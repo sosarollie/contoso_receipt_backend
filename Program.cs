@@ -1,17 +1,69 @@
 using System.Runtime.CompilerServices;
 using contoso_receipt_backend.Classes;
 using contoso_receipt_backend.Classes.Receipts;
+using contoso_receipt_backend.Classes.Users.Employees;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
-// dependency injection for the inmemory database context, it will construct the ContosoDbContext object when needed
+// dependency injection for the SQLite database context, it will construct the ContosoDbContext object when needed
 // will allow the database to be injected into the methods that need it
 builder.Services.AddDbContext<ContosoDbContext>(options =>
-    options.UseInMemoryDatabase("ContosoReceiptDb"));
+    options.UseSqlite("Data Source=contoso_receipts.db"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
+
+// Seed initial data
+using (var scope = app.Services.CreateScope())
+{
+    var db = scope.ServiceProvider.GetRequiredService<ContosoDbContext>();
+    
+    // Ensure database is created
+    db.Database.EnsureCreated();
+    
+    // Seed Categories if none exist
+    if (!db.Categories.Any())
+    {
+        db.Categories.AddRange(
+            new Category("Office Supplies"),
+            new Category("Software & Subscriptions"),
+            new Category("Cloud & Infrastructure"),
+            new Category("IT & Electronics (Accessories & Peripherals)"),
+            new Category("Shipping & Logistics"),
+            new Category("Business Travel & Transportation"),
+            new Category("Parking & Tolls"),
+            new Category("Office Pantry & Refreshments"),
+            new Category("Facilities & Maintenance Services"),
+            new Category("Office Furniture"),
+            new Category("Professional Development (Training & Education)"),
+            new Category("Marketing & Advertising"),
+            new Category("Telecommunications (Internet & Phone)"),
+            new Category("Team Events & Employee Engagement")
+        );
+    }
+    
+    // Seed Merchants if none exist
+    if (!db.Merchants.Any())
+    {
+        db.Merchants.AddRange(
+            new Merchant("Starbucks"),
+            new Merchant("Amazon"),
+            new Merchant("Uber")
+        );
+    }
+    
+    // Seed Employees if none exist
+    if (!db.Employees.Any())
+    {
+        db.Employees.AddRange(
+            new Employee("john.doe@contoso.com", "password123", "John", "Doe"),
+            new Employee("jane.smith@contoso.com", "password123", "Jane", "Smith")
+        );
+    }
+    
+    db.SaveChanges();
+}
 
 var receipts = app.MapGroup("/receipts");
 receipts.MapGet("/", GetAllReceipts);
@@ -52,7 +104,7 @@ static async Task<IResult> UpdateReceipt(int id, ReceiptDTO recDTO, ContosoDbCon
         receipt.Total_amount = recDTO.Total_amount;
         receipt.Proper_name = recDTO.Proper_name;
         receipt.Email = recDTO.Email;
-        receipt.Name = recDTO.Name;
+        receipt.CategoryName = recDTO.CategoryName;
 
         await db.SaveChangesAsync();
         return TypedResults.NoContent();

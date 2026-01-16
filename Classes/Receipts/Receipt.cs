@@ -12,7 +12,7 @@
         //Foreign keys
         public String Proper_name { get; set; }
         public String Email { get; set; }
-        public String Name { get; set; }
+        public String CategoryName { get; set; }
     }
 
 
