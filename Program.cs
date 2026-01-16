@@ -1,13 +1,14 @@
 using System.Runtime.CompilerServices;
+using contoso_receipt_backend.Classes;
 using contoso_receipt_backend.Classes.Receipts;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
-// dependency injection for the inmemory database context, it will construct the receiptdb object when needed
+// dependency injection for the inmemory database context, it will construct the ContosoDbContext object when needed
 // will allow the database to be injected into the methods that need it
-builder.Services.AddDbContext<ReceiptDB>(options =>
-    options.UseInMemoryDatabase("ReceiptList"));
+builder.Services.AddDbContext<ContosoDbContext>(options =>
+    options.UseInMemoryDatabase("ContosoReceiptDb"));
 builder.Services.AddDatabaseDeveloperPageExceptionFilter();
 
 var app = builder.Build();
@@ -24,12 +25,12 @@ receipts.MapDelete("/{id}", DeleteReceiptById);
 app.Run();
 
 //method to get all receipts
-static async Task<IResult> GetAllReceipts(ReceiptDB db)
+static async Task<IResult> GetAllReceipts(ContosoDbContext db)
 { //x is the equivalent of the * in sql, we are selecting all columns, DTO stands for Data Transfer Object
     return TypedResults.Ok(await db.Receipts.Select(x => new ReceiptDTO(x)).ToArrayAsync());
 }
 
-static async Task<IResult> CreateReceipt(Receipt rec, ReceiptDB db)
+static async Task<IResult> CreateReceipt(Receipt rec, ContosoDbContext db)
 {
     db.Receipts.Add(rec);
     await db.SaveChangesAsync(); //EF method to save changes to the database
@@ -40,7 +41,7 @@ static async Task<IResult> CreateReceipt(Receipt rec, ReceiptDB db)
     return TypedResults.Created($"/receipts/{rec.Id}", dto);  
 }
 
-static async Task<IResult> UpdateReceipt(int id, ReceiptDTO recDTO, ReceiptDB db)
+static async Task<IResult> UpdateReceipt(int id, ReceiptDTO recDTO, ContosoDbContext db)
 {
     var receipt = await db.Receipts.FindAsync(id);
     if (receipt is null) return TypedResults.NotFound();
@@ -58,7 +59,7 @@ static async Task<IResult> UpdateReceipt(int id, ReceiptDTO recDTO, ReceiptDB db
     }
 }
 
-static async Task<IResult> GetReceiptById(int id, ReceiptDB db)
+static async Task<IResult> GetReceiptById(int id, ContosoDbContext db)
 {
     return await db.Receipts.FindAsync(id) //EF method to find by its ID (PK)
         is Receipt rec // if that is a receipt
@@ -66,7 +67,7 @@ static async Task<IResult> GetReceiptById(int id, ReceiptDB db)
             : TypedResults.NotFound(); //else return not found
 }
 
-static async Task<IResult> DeleteReceiptById(int id, ReceiptDB db)
+static async Task<IResult> DeleteReceiptById(int id, ContosoDbContext db)
 {
     if (await db.Receipts.FindAsync(id) is Receipt rec)
     {
