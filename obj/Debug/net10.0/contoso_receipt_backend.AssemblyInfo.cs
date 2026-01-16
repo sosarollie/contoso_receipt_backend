@@ -13,7 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("contoso_receipt_backend")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+52dc7057df7fcac39ee3c564b444357a527675cf")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+395827a949bcffcd97a585987c327e2a85356fac")]
 [assembly: System.Reflection.AssemblyProductAttribute("contoso_receipt_backend")]
 [assembly: System.Reflection.AssemblyTitleAttribute("contoso_receipt_backend")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
