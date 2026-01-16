@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 
-namespace contoso_receipt_backend
+namespace contoso_receipt_backend.Classes.Receipts
 {
     public class ReceiptDB : DbContext
     {

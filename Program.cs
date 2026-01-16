@@ -1,6 +1,7 @@
 using System.Runtime.CompilerServices;
-using contoso_receipt_backend;
+using contoso_receipt_backend.Classes.Receipts;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
 
 var builder = WebApplication.CreateBuilder(args);
 // dependency injection for the inmemory database context, it will construct the receiptdb object when needed
@@ -17,6 +18,8 @@ receipts.MapPost("/", CreateReceipt);
 receipts.MapGet("/{id}", GetReceiptById);
 receipts.MapPut("/{id}", UpdateReceipt);
 receipts.MapDelete("/{id}", DeleteReceiptById);
+// to do next return the receipts that are marked as pending for review
+
 
 app.Run();
 
